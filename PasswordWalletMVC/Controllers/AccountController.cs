@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using PasswordWalletMVC.Models;
 using System.Linq;
-
+using System;
 
 namespace PasswordWalletMVC.Controllers
 {
@@ -11,7 +11,10 @@ namespace PasswordWalletMVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+           using(OurDbContext db = new OurDbContext())
+            {
+                return View(db.userAccount.ToList());
+            }
         }
 
         public IActionResult Register()
@@ -47,11 +50,18 @@ namespace PasswordWalletMVC.Controllers
         {
             using(OurDbContext db = new OurDbContext())
             {
-               
-                var usr = db.userAccount.Single(u => u.UserName == user.UserName && u.Password == user.Password);
+                UserAccount usr = null;
+                try
+                {
+                    usr = db.userAccount.Single(u => u.UserName == user.UserName && u.Password == user.Password);
+                }
+                catch(InvalidOperationException e)
+                {
+                    ModelState.AddModelError("", "UserName or Password is wrong.");
+                }
 
-                
-                if(usr != null)
+
+                if (usr != null)
                 {
                     
                     HttpContext.Session.SetString("UserId"  , usr.UserId.ToString());
@@ -66,7 +76,28 @@ namespace PasswordWalletMVC.Controllers
                 return View();
             }
 
-            //public ActionResult
+        }
+
+        public IActionResult LoggedIn()
+        {
+            if (HttpContext.Session.GetString("UserId") != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+
+        public IActionResult Displayed_Passwords()
+        {
+            using (OurDbContext db = new OurDbContext())
+            {
+                return View(db.userAccount.ToList());
+            }
+          //zxzxzxz
         }
     }
 }
