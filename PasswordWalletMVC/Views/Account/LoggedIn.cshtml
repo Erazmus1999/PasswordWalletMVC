@@ -1,16 +1,46 @@
-﻿@using Microsoft.AspNetCore.Http
-@model IEnumerable<PasswordWalletMVC.Models.UserAccount>
+﻿@model PasswordWalletMVC.Models.Passwd
 
 @{
-    ViewBag.Title = "LoggedIn";
- //  @if (HttpContext.Session.GetString("UserId") != null)
- //{
- //   <h4>Hello @HttpContext.Session.GetString("UserName")</h4>
- //}
- }
- 
+    ViewData["Title"] = "LoggedIn";
+}
+
+<h1>LoggedIn</h1>
+<h2>Add new password if you want to</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="LoggedIn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+            <div class="form-group">
+                <label asp-for="PasswdName" class="control-label"></label>
+                <input asp-for="PasswdName" class="form-control" />
+                <span asp-validation-for="PasswdName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
 
 
-
-
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @if (ViewBag.Message != null)
+    {
+        <div class="form-group">
+            <div class="col-md-10">@ViewBag.Message</div>
+        </div>
+    }
+}

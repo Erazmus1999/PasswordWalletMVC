@@ -11,16 +11,6 @@ namespace PasswordWalletMVC.Models
         [Key]
         public int UserId { get; set; }
 
-        [Required(ErrorMessage ="First Name required")]
-        public string FirstName { get; set; }
-
-        [Required(ErrorMessage = "Last Name required")]
-        public string LastName { get; set; }
-
-        [Required(ErrorMessage = "Email required")]
-        [RegularExpression(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$")]
-        public string Email { get; set; }
-
         [Required(ErrorMessage = "UserName required")]
         public string UserName { get; set; }
 
@@ -28,9 +18,7 @@ namespace PasswordWalletMVC.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Compare("Password", ErrorMessage ="Please confirm your password")]
-        [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }
+        public virtual List<Passwd> UserPasswords { get; set; }
 
     }
 }

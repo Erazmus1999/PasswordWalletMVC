@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using PasswordWalletMVC.Models;
 using System.Linq;
 using System;
+using System.Security.Principal;
 
 namespace PasswordWalletMVC.Controllers
 {
@@ -29,12 +30,11 @@ namespace PasswordWalletMVC.Controllers
             {
                 using(OurDbContext db = new OurDbContext())
                 {
-                    db.userAccount.Add(account);
+                    db.userAccount.Add(account);                   
                     db.SaveChanges();
                 }
                 ModelState.Clear();
-                // We will be displaying hashed password there
-                ViewBag.Message = account.FirstName + " " + account.LastName + "Successfully registered.";
+                // We will be displaying hashed password there           
             }   
             return View();
         }
@@ -78,11 +78,21 @@ namespace PasswordWalletMVC.Controllers
 
         }
 
-        public IActionResult LoggedIn()
+        public IActionResult LoggedIn(UserAccount account, Passwd password_)
         {
             if (HttpContext.Session.GetString("UserId") != null)
             {
-                return View();
+                if (ModelState.IsValid)
+                {
+                    using (OurDbContext db = new OurDbContext())
+                    {
+                        db.passwds.Add(password_);
+                        db.SaveChanges();
+                    }
+                    ModelState.Clear();
+                    // We will be displaying hashed password there           
+                }
+                return View();           
             }
             else
             {
@@ -95,9 +105,8 @@ namespace PasswordWalletMVC.Controllers
         {
             using (OurDbContext db = new OurDbContext())
             {
-                return View(db.userAccount.ToList());
+                return View(db.passwds.ToList());
             }
-          //zxzxzxz
         }
     }
 }

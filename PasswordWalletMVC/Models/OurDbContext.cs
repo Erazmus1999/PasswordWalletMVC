@@ -9,5 +9,6 @@ namespace PasswordWalletMVC.Models
     public class OurDbContext : DbContext
     {
         public DbSet<UserAccount> userAccount { get; set; }
+        public DbSet<Passwd> passwds { get; set; }
     }
 }
