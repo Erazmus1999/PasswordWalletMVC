@@ -10,5 +10,6 @@ namespace PasswordWalletMVC.Models
     {
         public DbSet<UserAccount> userAccount { get; set; }
         public DbSet<Passwd> passwds { get; set; }
+
     }
 }

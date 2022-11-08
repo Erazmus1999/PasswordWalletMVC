@@ -63,10 +63,9 @@ namespace PasswordWalletMVC.Controllers
 
                 if (usr != null)
                 {
-                    
                     HttpContext.Session.SetString("UserId"  , usr.UserId.ToString());
-                    HttpContext.Session.SetString("UserName", usr.UserId.ToString());
-
+                    HttpContext.Session.SetString("UserName", usr.UserName.ToString());
+                    ViewBag.TotalStudents = HttpContext.Session.Get("UserName");
                     return RedirectToAction("LoggedIn");
                 }
                 else
@@ -75,29 +74,27 @@ namespace PasswordWalletMVC.Controllers
                 }
                 return View();
             }
-
+           
         }
-
-        public IActionResult LoggedIn(UserAccount account, Passwd password_)
+        public IActionResult LoggedIn()
         {
-            if (HttpContext.Session.GetString("UserId") != null)
-            {
-                if (ModelState.IsValid)
+            return View();
+        }
+        [HttpPost]
+        public IActionResult LoggedIn(Passwd password_)
+        {        
+            if (ModelState.IsValid)
                 {
                     using (OurDbContext db = new OurDbContext())
                     {
+                        password_.UserNameId = int.Parse(HttpContext.Session.GetString("UserId"));
                         db.passwds.Add(password_);
                         db.SaveChanges();
                     }
                     ModelState.Clear();
                     // We will be displaying hashed password there           
                 }
-                return View();           
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
+            return View();
         }
 
 

@@ -12,6 +12,7 @@ namespace PasswordWalletMVC.Models
         [Required(ErrorMessage = "UserName required")]
         //[ForeignKey("UserAccount")]
         public int UserNameId { get; set; }
+        public virtual UserAccount UserAccount { get; set; }
 
         [Required(ErrorMessage = "UserName required")]
         public int PasswdName { get; set; }
