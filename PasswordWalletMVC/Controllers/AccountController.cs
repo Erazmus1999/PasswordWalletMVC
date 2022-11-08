@@ -63,11 +63,10 @@ namespace PasswordWalletMVC.Controllers
 
                 if (usr != null)
                 {
-                    
                     HttpContext.Session.SetString("UserId"  , usr.UserId.ToString());
                     HttpContext.Session.SetString("UserName", usr.UserName.ToString());
                     ViewBag.TotalStudents = HttpContext.Session.Get("UserName");
-                    //return RedirectToAction("LoggedIn");
+                    return RedirectToAction("LoggedIn");
                 }
                 else
                 {
@@ -83,13 +82,13 @@ namespace PasswordWalletMVC.Controllers
         }
         [HttpPost]
         public IActionResult LoggedIn(Passwd password_)
-        {
-                if (ModelState.IsValid)
+        {        
+            if (ModelState.IsValid)
                 {
                     using (OurDbContext db = new OurDbContext())
                     {
                         password_.UserNameId = int.Parse(HttpContext.Session.GetString("UserId"));
-                    db.passwds.Add(password_);
+                        db.passwds.Add(password_);
                         db.SaveChanges();
                     }
                     ModelState.Clear();
