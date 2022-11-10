@@ -38,6 +38,9 @@
 
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+
+    <label>ZAWARTOŚĆ SESJI(ID): </label>  @ViewBag.TotalStudents
     @if (ViewBag.Message != null)
     {
         <div class="form-group">

@@ -15,7 +15,7 @@ namespace PasswordWalletMVC.Models
         public virtual UserAccount UserAccount { get; set; }
 
         [Required(ErrorMessage = "UserName required")]
-        public int PasswdName { get; set; }
+        public string PasswdName { get; set; }
 
 
         [Required(ErrorMessage = "Password required")]

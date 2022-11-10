@@ -4,12 +4,14 @@ using PasswordWalletMVC.Models;
 using System.Linq;
 using System;
 using System.Security.Principal;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PasswordWalletMVC.Controllers
 {
     public class AccountController : Controller
     {
-
+        public int global_var { get; set; }
         public IActionResult Index()
         {
            using(OurDbContext db = new OurDbContext())
@@ -44,7 +46,7 @@ namespace PasswordWalletMVC.Controllers
         {
             return View();
         }
-
+        
         [HttpPost]
         public IActionResult Login(UserAccount user)
         {
@@ -63,14 +65,16 @@ namespace PasswordWalletMVC.Controllers
 
                 if (usr != null)
                 {
-                    HttpContext.Session.SetString("UserId"  , usr.UserId.ToString());
+                    HttpContext.Session.SetString("UserId", usr.UserId.ToString());
                     HttpContext.Session.SetString("UserName", usr.UserName.ToString());
-                    ViewBag.TotalStudents = HttpContext.Session.Get("UserName");
-                    return RedirectToAction("LoggedIn");
+                    ViewBag.TotalStudents = HttpContext.Session.GetString("UserId");
+                    //global_var = HttpContext.Session.GetString("UserId");
+                    return View("LoggedIn");
                 }
                 else
                 {
                     ModelState.AddModelError("", "UserName or Password is wrong.");
+
                 }
                 return View();
             }
@@ -81,29 +85,60 @@ namespace PasswordWalletMVC.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult LoggedIn(Passwd password_)
-        {        
-            if (ModelState.IsValid)
+        public IActionResult LoggedIn(UserAccount User, Passwd password_)
+        {         
+                using (OurDbContext db = new OurDbContext())
                 {
-                    using (OurDbContext db = new OurDbContext())
-                    {
-                        password_.UserNameId = int.Parse(HttpContext.Session.GetString("UserId"));
-                        db.passwds.Add(password_);
-                        db.SaveChanges();
-                    }
-                    ModelState.Clear();
-                    // We will be displaying hashed password there           
+                    
+                    db.passwds.Add(password_);
+                    password_.UserNameId = Int32.Parse(HttpContext.Session.GetString("UserId"));
+                    db.SaveChanges();
                 }
+                ModelState.Clear();
+                // We will be displaying hashed password there                       
             return View();
         }
 
 
-        public IActionResult Displayed_Passwords()
+        public IActionResult Displayed_Passwords(UserAccount User, Passwd password_)
         {
             using (OurDbContext db = new OurDbContext())
             {
-                return View(db.passwds.ToList());
+                
+                var query = (from g in db.passwds
+                            join u in db.userAccount on g.UserNameId equals u.UserId
+                            select new { g, u, }).ToList();
+
+               // var matchingRecords = db.passwds.Where(x => context.User.UserId == password_.UserNameId).ToList();
+                return View(query);
             }
         }
+
+        //get the employees, which in TodayEmployees Table, but not exist in the YesterdayEmployee
+
+        /*
+        var query4 = (from t in db.passwds
+                              where (from y in db.userAccount select y.UserId).Contains(t.UserNameId)
+                              select t).ToList();
+        UserAccount usr2 = null;
+
+        List<Passwd> numberList = new List<Passwd>();
+
+        foreach (var element in db.passwds.ToList())
+        {
+            if(Int32.Parse(HttpContext.Session.GetString("UserId")) == password_.UserNameId)
+            {
+                numberList.Add(element);
+                Console.WriteLine(element.PasswdName);
+            }
+        }
+
+        return View(numberList);
+        return View(db.passwds.ToList());
+
+    }
+      
+    }
+          */
     }
 }
